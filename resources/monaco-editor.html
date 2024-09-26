@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monaco Editor</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+        #container {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+    <!-- Load Monaco Editor loader script first -->
+    <script src="https://unpkg.com/monaco-editor@0.36.1/min/vs/loader.js"></script>
+    <script>
+        require.config({ paths: { 'vs': 'https://unpkg.com/monaco-editor@0.36.1/min/vs' }});
+        require(['vs/editor/editor.main'], function() {
+            monaco.languages.register({ id: 'lua' });
+
+            monaco.languages.setMonarchTokensProvider('lua', {
+                tokenizer: {
+                    root: [
+                        [/\b(?:if|then|else|elseif|end|function|return|local|for|in|do|while|repeat|until|break|not|and|or)\b/, 'keyword'],
+                        [/\b(?:true|false|nil)\b/, 'constant'],
+                        [/\b(?:[0-9]+(?:\.[0-9]*)?(?:[eE][\-+]?[0-9]+)?)\b/, 'number'],
+                        [/[a-zA-Z_]\w*/, 'identifier'],
+                        [/[{}()\[\]]/, '@brackets'],
+                        [/--\[=*\[.*?\]=*\]/, 'comment'],
+                        [/--.*$/, 'comment'],
+                        [/[=<>~!]=|[+\-*/%#^]/, 'operator'],
+                        [/".*?"/, 'string'],
+                        [/'[^\\']*'/, 'string'],
+                        [/\s+/, 'white'],
+                        [/[^\s{}()\[\]]+/, 'text']
+                    ]
+                }
+            });
+
+            monaco.editor.defineTheme('myDarkTheme', {
+                base: 'vs-dark',
+                inherit: true,
+                rules: [
+                    { token: 'keyword', foreground: '569cd6' },
+                    { token: 'constant', foreground: '4ec9b0' },
+                    { token: 'number', foreground: 'b5cea8' },
+                    { token: 'identifier', foreground: 'd4d4d4' },
+                    { token: 'string', foreground: 'ce9178' },
+                    { token: 'operator', foreground: 'd4d4d4' },
+                    { token: 'comment', foreground: '6a9955' },
+                    { token: 'brackets', foreground: 'd4d4d4' },
+                    { token: 'white', foreground: 'd4d4d4' },
+                    { token: 'text', foreground: 'ffffff' },
+                    { token: 'error', foreground: 'ff0000' }
+                ],
+                colors: {
+                    'editor.background': '#1e1e1e'
+                }
+            });
+
+            window.editorInstance = monaco.editor.create(document.getElementById('container'), {
+                value: '-- discord.gg/binary',
+                language: 'lua',
+                theme: 'myDarkTheme'
+            });
+
+            window.clearEditor = function() {
+                window.editorInstance.setValue('');
+            };
+
+            window.getEditorContent = function() {
+                return window.editorInstance.getValue();
+            };
+
+            window.setEditorContent = function(content) {
+                window.editorInstance.setValue(content);
+            };
+
+            window.insertInfiniteYield = function() {
+                var infiniteYieldScript = "loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()";
+                window.editorInstance.setValue(infiniteYieldScript);
+            };
+        });
+    </script>
+</head>
+<body>
+    <div id="container"></div>
+</body>
+</html>
